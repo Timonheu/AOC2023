@@ -57,7 +57,7 @@ fn get_last(line: &str) -> String {
         }
     }
     if let Some(location) = last_location {
-        if location > last.0 {
+        if location >= last.0 {
             return line.chars().nth(location).unwrap().to_string();
         }
     }
