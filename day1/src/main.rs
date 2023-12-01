@@ -21,7 +21,6 @@ fn get_value(line: &str) -> i32 {
         .to_digit(10)
         .unwrap()
         .to_string();
-    // TODO: form a two digit number insead of adding them
     first.push_str(&last);
     first.parse().unwrap()
 }
