@@ -34,8 +34,10 @@ fn get_first(line: &str) -> String {
     let mut first: (usize, &str) = (usize::MAX, "");
     for digit in DIGITS {
         let search_result = line.find(digit);
-        if search_result.is_some() && search_result.unwrap() < first.0 {
-            first = (search_result.unwrap(), digit);
+        if let Some(result) = search_result {
+            if result < first.0 {
+                first = (result, digit);
+            }
         }
     }
     if let Some(location) = first_location {
@@ -52,8 +54,10 @@ fn get_last(line: &str) -> String {
     let mut last: (usize, &str) = (0, "");
     for digit in DIGITS {
         let search_result = line.rfind(digit);
-        if search_result.is_some() && search_result.unwrap() >= last.0 {
-            last = (search_result.unwrap(), digit);
+        if let Some(result) = search_result {
+            if result >= last.0 {
+                last = (result, digit);
+            }
         }
     }
     if let Some(location) = last_location {
