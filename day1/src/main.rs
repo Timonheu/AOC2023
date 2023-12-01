@@ -5,7 +5,7 @@ const DIGITS: &[&str] = &[
 ];
 
 fn main() {
-    let input = fs::read_to_string("input/example2.txt").unwrap();
+    let input = fs::read_to_string("input/input.txt").unwrap();
     let lines = input.lines();
     //let mut sum = 0;
     let mut sum2: i32 = 0;
@@ -17,7 +17,7 @@ fn main() {
         sum2 += number;
     }
     //print!("Answer to part 1 is {}.", sum);
-    print!("Answer to part 2 is {}.", sum2);
+    println!("Answer to part 2 is {}.", sum2);
 }
 
 fn get_value(line: &str) -> i32 {
@@ -30,7 +30,7 @@ fn get_value(line: &str) -> i32 {
 }
 
 fn get_first(line: &str) -> String {
-    let first_digit = line.find(|c: char| c.is_numeric());
+    let first_location = line.find(|c: char| c.is_numeric());
     let mut first: (usize, &str) = (usize::MAX, "");
     for digit in DIGITS {
         let search_result = line.find(digit);
@@ -38,16 +38,16 @@ fn get_first(line: &str) -> String {
             first = (search_result.unwrap(), digit);
         }
     }
-    if let Some(digit) = first_digit {
-        if digit < first.0 {
-            return first_digit.unwrap().to_string();
+    if let Some(location) = first_location {
+        if location < first.0 {
+            return line.chars().nth(location).unwrap().to_string();
         }
     }
     get_digit_string(first.1)
 }
 
 fn get_last(line: &str) -> String {
-    let last_digit = line.rfind(|c: char| c.is_numeric());
+    let last_location = line.rfind(|c: char| c.is_numeric());
 
     let mut last: (usize, &str) = (0, "");
     for digit in DIGITS {
@@ -56,9 +56,9 @@ fn get_last(line: &str) -> String {
             last = (search_result.unwrap(), digit);
         }
     }
-    if let Some(digit) = last_digit {
-        if digit > last.0 {
-            return digit.to_string();
+    if let Some(location) = last_location {
+        if location > last.0 {
+            return line.chars().nth(location).unwrap().to_string();
         }
     }
     get_digit_string(last.1)
