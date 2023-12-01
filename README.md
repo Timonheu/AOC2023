@@ -1,2 +1,2 @@
 # AOC2023
-Attempting advent of code 2023 in rust with neovim.
+Attempting advent of code 2023 in rust.
