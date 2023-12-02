@@ -8,12 +8,12 @@ struct Maximum {
 
 fn main() {
     let maximum = Maximum {
-        red: 11,
-        green: 12,
-        blue: 13,
+        red: 12,
+        green: 13,
+        blue: 14,
     };
 
-    let input = fs::read_to_string("input/example.txt").unwrap();
+    let input = fs::read_to_string("input/input.txt").unwrap();
     let lines = input.lines();
 
     let mut sum = 0;
