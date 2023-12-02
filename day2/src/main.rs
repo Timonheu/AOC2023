@@ -33,17 +33,17 @@ fn main() {
                 let color = split.next().unwrap();
                 match color {
                     "red" => {
-                        if amount >= maximum.red {
+                        if amount > maximum.red {
                             valid = false;
                         }
                     }
                     "green" => {
-                        if amount >= maximum.green {
+                        if amount > maximum.green {
                             valid = false;
                         }
                     }
                     "blue" => {
-                        if amount >= maximum.blue {
+                        if amount > maximum.blue {
                             valid = false;
                         }
                     }
