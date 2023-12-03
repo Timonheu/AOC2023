@@ -49,8 +49,8 @@ fn main() {
         }
 
         let found_cogs: Vec<usize> = line.match_indices('*').map(|c| c.0).collect();
-        // not the prettiest, but for each cog collect all unique adjacent cogs, if there are
-        // exactly two add their gear ratio to the sum
+        // not the prettiest, but for each cog collect all unique adjacent numbers, if there
+        // are exactly two add their gear ratio to the sum
         for cog in found_cogs {
             let mut adjacent_numbers: Vec<Number> = vec![];
             let minimum = if cog > 0 { cog - 1 } else { cog };
