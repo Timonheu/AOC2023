@@ -9,7 +9,7 @@ struct Number {
 }
 
 fn main() {
-    let input = fs::read_to_string("input/example.txt").unwrap();
+    let input = fs::read_to_string("input/input.txt").unwrap();
     let lines = input.lines();
     let lines_vec: Vec<&str> = lines.collect();
     let number_of_lines = lines_vec.len();
