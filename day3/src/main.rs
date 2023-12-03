@@ -41,9 +41,9 @@ fn main() {
     // find all symbols and put them in a two dimensional vector
     for i in 0..number_of_lines {
         let line = lines_vec[i];
-        let found_symbols = line.match_indices(is_symbol);
+        let found_symbols: Vec<usize> = line.match_indices(is_symbol).map(|s| s.0).collect();
         for symbol in found_symbols {
-            symbols[i].push(symbol.0);
+            symbols[i].push(symbol);
         }
     }
 
