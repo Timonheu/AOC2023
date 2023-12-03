@@ -14,7 +14,8 @@ fn main() {
     let lines = input.lines();
     let lines_vec: Vec<&str> = lines.collect();
     let number_of_lines = lines_vec.len();
-    let mut numbers: Vec<HashSet<Number>> = vec![HashSet::new(); number_of_lines];
+    let mut numbers: Vec<HashSet<Number>> = vec![HashSet::new(); number_of_lines]; // using a hash
+                                                                                   // set to avoid duplicates
     let number_regex = Regex::new(r"[0-9]+").unwrap();
 
     // Find all numbers and put them in a two dimensional vector
