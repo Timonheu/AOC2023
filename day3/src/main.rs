@@ -1,5 +1,5 @@
 use regex::Regex;
-use std::fs;
+use std::{collections::HashSet, fs};
 
 #[derive(Clone, Eq, Hash, PartialEq, Debug)]
 struct Number {
@@ -40,13 +40,48 @@ fn main() {
     assert!(overlap_check(numbers.clone()));
 
     let mut symbols: Vec<Vec<usize>> = vec![vec![]; number_of_lines];
-
+    let mut cog_sum = 0;
     // find all symbols and put them in a two dimensional vector
     for i in 0..number_of_lines {
         let line = lines_vec[i];
         let found_symbols: Vec<usize> = line.match_indices(is_symbol).map(|s| s.0).collect();
         for symbol in found_symbols {
             symbols[i].push(symbol);
+        }
+
+        let found_cogs: Vec<usize> = line.match_indices('*').map(|c| c.0).collect();
+        // very inefficient
+        for cog in found_cogs {
+            let mut adjacent_numbers: HashSet<Number> = HashSet::new();
+            let minimum = if cog > 0 { cog - 1 } else { cog };
+            let maximum = if cog >= lines_vec[0].len() - 1 {
+                cog
+            } else {
+                cog + 1
+            };
+            if i > 0 {
+                for number in &numbers[i - 1] {
+                    if overlap(minimum, maximum, number.start, number.end) {
+                        adjacent_numbers.insert(number.clone());
+                    }
+                }
+            }
+            for number in &numbers[i] {
+                if overlap(minimum, maximum, number.start, number.end) {
+                    adjacent_numbers.insert(number.clone());
+                }
+            }
+            if i < number_of_lines - 1 {
+                for number in &numbers[i + 1] {
+                    if overlap(minimum, maximum, number.start, number.end) {
+                        adjacent_numbers.insert(number.clone());
+                    }
+                }
+            }
+            if adjacent_numbers.len() == 2 {
+                let iter: Vec<&Number> = adjacent_numbers.iter().collect();
+                cog_sum += iter[0].value * iter[1].value;
+            }
         }
     }
 
@@ -81,7 +116,8 @@ fn main() {
             }
         }
     }
-    println!("Answer to part 1 is {sum}.")
+    println!("Answer to part 1 is {sum}.");
+    println!("Answer to part 2 is {cog_sum}.");
 }
 
 fn is_symbol(input: char) -> bool {
