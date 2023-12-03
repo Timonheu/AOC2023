@@ -1,5 +1,4 @@
 use regex::Regex;
-use std::collections::HashSet;
 use std::fs;
 
 #[derive(Clone, Eq, Hash, PartialEq, Debug)]
@@ -10,12 +9,11 @@ struct Number {
 }
 
 fn main() {
-    let input = fs::read_to_string("input/input.txt").unwrap();
+    let input = fs::read_to_string("input/example.txt").unwrap();
     let lines = input.lines();
     let lines_vec: Vec<&str> = lines.collect();
     let number_of_lines = lines_vec.len();
-    let mut numbers: Vec<HashSet<Number>> = vec![HashSet::new(); number_of_lines]; // using a hash
-                                                                                   // set to avoid duplicates
+    let mut numbers: Vec<Vec<Number>> = vec![vec![]; number_of_lines];
     let number_regex = Regex::new(r"[0-9]+").unwrap();
 
     // Find all numbers and put them in a two dimensional vector
@@ -31,12 +29,12 @@ fn main() {
             let value: i32 = number_slice.parse().unwrap();
             let start = remaining_line.find(number_slice).unwrap() + current_index;
             let end = start + number_slice.len() - 1;
-            numbers[i].insert(Number { value, start, end });
+            numbers[i].push(Number { value, start, end });
             remaining_line = remaining_line
                 .get_mut(end + 1 - current_index..)
                 .unwrap()
                 .to_string();
-            current_index += end;
+            current_index = end + 1;
         }
     }
     assert!(overlap_check(numbers.clone()));
@@ -54,7 +52,7 @@ fn main() {
 
     // Check for each number if it has an ajacent symbol, if yes add the number to the sum.
     let mut sum = 0;
-    for i in 0..numbers.len() {
+    for i in 0..number_of_lines {
         '_symbol_check: for number in &numbers[i] {
             let minimum = if number.start > 0 {
                 number.start - 1
@@ -99,7 +97,7 @@ fn adjacent_symbol(input_vector: &[usize], minimum: usize, maximum: usize) -> bo
     false
 }
 
-fn overlap_check(numbers: Vec<HashSet<Number>>) -> bool {
+fn overlap_check(numbers: Vec<Vec<Number>>) -> bool {
     for set in numbers {
         for number in set.clone() {
             for number2 in &set {
@@ -108,7 +106,6 @@ fn overlap_check(numbers: Vec<HashSet<Number>>) -> bool {
                 {
                     println!("Overlap! number1: {:#?}", number);
                     println!("number2: {:#?}", number2);
-
                     return false;
                 }
             }
