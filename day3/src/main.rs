@@ -23,13 +23,14 @@ fn main() {
         let line = lines_vec[i];
         let found_numbers = Regex::find_iter(&number_regex, line);
 
+        let mut remaining_line = String::from(line);
         for number in found_numbers {
-            let value: i32 = number.as_str().parse().unwrap();
-            for occurence in line.match_indices(number.as_str()) {
-                let start = occurence.0;
-                let end = start + number.len() - 1;
-                numbers[i].insert(Number { value, start, end });
-            }
+            let number_slice = number.as_str();
+            let value: i32 = number_slice.parse().unwrap();
+            let start = remaining_line.find(number_slice).unwrap();
+            let end = start + number_slice.len() - 1;
+            numbers[i].insert(Number { value, start, end });
+            remaining_line = remaining_line.get_mut(end + 1..).unwrap().to_string();
         }
     }
     assert!(overlap_check(numbers.clone()));
