@@ -32,6 +32,7 @@ fn main() {
             }
         }
     }
+    assert!(overlap_check(numbers.clone()));
 
     let mut symbols: Vec<Vec<usize>> = vec![vec![]; number_of_lines];
 
@@ -89,4 +90,23 @@ fn adjacent_symbol(input_vector: &[usize], minimum: usize, maximum: usize) -> bo
         }
     }
     false
+}
+
+fn overlap_check(numbers: Vec<HashSet<Number>>) -> bool {
+    for set in numbers {
+        for number in set.clone() {
+            for number2 in &set {
+                if number != *number2
+                    && overlap(number.start, number.end, number2.start, number2.end)
+                {
+                    return false;
+                }
+            }
+        }
+    }
+    true
+}
+
+fn overlap(start1: usize, end1: usize, start2: usize, end2: usize) -> bool {
+    (start1 >= start2 && start1 <= end2) || (end1 >= start2 && end1 <= end2)
 }
