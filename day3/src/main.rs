@@ -16,6 +16,7 @@ fn main() {
     let mut numbers: Vec<Vec<Number>> = vec![vec![]; number_of_lines];
     let number_regex = Regex::new(r"[0-9]+").unwrap();
 
+    // Find all numbers and put them in a two dimensional vector
     for i in 0..number_of_lines {
         let line = lines_vec[i];
         let found_numbers = Regex::find_iter(&number_regex, line);
@@ -23,13 +24,14 @@ fn main() {
         for number in found_numbers {
             let value: i32 = number.as_str().parse().unwrap();
             let start = line.find(number.as_str()).unwrap();
-            let end = start + number.len();
+            let end = start + number.len() - 1;
             numbers[i].push(Number { value, start, end })
         }
     }
 
     let mut symbols: Vec<Vec<usize>> = vec![vec![]; number_of_lines];
 
+    // find all symbols and put them in a two dimensional vector
     for i in 0..number_of_lines {
         let line = lines_vec[i];
         let found_symbols = line.match_indices(is_symbol);
@@ -37,9 +39,11 @@ fn main() {
             symbols[i].push(symbol.0);
         }
     }
+
+    // Check for each number if it has an ajacent symbol, if yes add the number to the sum.
     let mut sum = 0;
     for i in 0..numbers.len() {
-        for number in &numbers[i] {
+        '_symbol_check: for number in &numbers[i] {
             let minimum = if number.start > 0 {
                 number.start - 1
             } else {
@@ -52,15 +56,15 @@ fn main() {
             };
             if i >= 1 && adjacent_symbol(&symbols[i - 1], minimum, maximum) {
                 sum += number.value;
-                continue;
+                continue '_symbol_check;
             }
             if adjacent_symbol(&symbols[i], minimum, maximum) {
                 sum += number.value;
-                continue;
+                continue '_symbol_check;
             }
             if i < lines_vec[0].len() - 1 && adjacent_symbol(&symbols[i + 1], minimum, maximum) {
                 sum += number.value;
-                continue;
+                continue '_symbol_check;
             }
         }
     }
