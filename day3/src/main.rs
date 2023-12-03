@@ -2,7 +2,7 @@ use regex::Regex;
 use std::collections::HashSet;
 use std::fs;
 
-#[derive(Clone, Eq, Hash, PartialEq)]
+#[derive(Clone, Eq, Hash, PartialEq, Debug)]
 struct Number {
     value: i32,   //value of the number
     start: usize, //index of first digit
@@ -26,15 +26,20 @@ fn main() {
             .collect();
 
         let mut remaining_line = String::from(line);
+        let mut current_index = 0;
         for number_slice in found_numbers {
             let value: i32 = number_slice.parse().unwrap();
-            let start = remaining_line.find(number_slice).unwrap();
+            let start = remaining_line.find(number_slice).unwrap() + current_index;
             let end = start + number_slice.len() - 1;
             numbers[i].insert(Number { value, start, end });
-            remaining_line = remaining_line.get_mut(end + 1..).unwrap().to_string();
+            remaining_line = remaining_line
+                .get_mut(end + 1 - current_index..)
+                .unwrap()
+                .to_string();
+            current_index += end;
         }
     }
-    //assert!(overlap_check(numbers.clone()));
+    assert!(overlap_check(numbers.clone()));
 
     let mut symbols: Vec<Vec<usize>> = vec![vec![]; number_of_lines];
 
@@ -101,6 +106,9 @@ fn overlap_check(numbers: Vec<HashSet<Number>>) -> bool {
                 if number != *number2
                     && overlap(number.start, number.end, number2.start, number2.end)
                 {
+                    println!("Overlap! number1: {:#?}", number);
+                    println!("number2: {:#?}", number2);
+
                     return false;
                 }
             }
