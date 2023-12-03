@@ -1,4 +1,5 @@
 use regex::Regex;
+use std::collections::HashSet;
 use std::fs;
 
 #[derive(Clone, Eq, Hash, PartialEq)]
@@ -13,7 +14,7 @@ fn main() {
     let lines = input.lines();
     let lines_vec: Vec<&str> = lines.collect();
     let number_of_lines = lines_vec.len();
-    let mut numbers: Vec<Vec<Number>> = vec![vec![]; number_of_lines];
+    let mut numbers: Vec<HashSet<Number>> = vec![HashSet::new(); number_of_lines];
     let number_regex = Regex::new(r"[0-9]+").unwrap();
 
     // Find all numbers and put them in a two dimensional vector
@@ -26,7 +27,7 @@ fn main() {
             for occurence in line.match_indices(number.as_str()) {
                 let start = occurence.0;
                 let end = start + number.len() - 1;
-                numbers[i].push(Number { value, start, end })
+                numbers[i].insert(Number { value, start, end });
             }
         }
     }
