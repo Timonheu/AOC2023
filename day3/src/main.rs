@@ -23,9 +23,11 @@ fn main() {
 
         for number in found_numbers {
             let value: i32 = number.as_str().parse().unwrap();
-            let start = line.find(number.as_str()).unwrap();
-            let end = start + number.len() - 1;
-            numbers[i].push(Number { value, start, end })
+            for occurence in line.match_indices(number.as_str()) {
+                let start = occurence.0;
+                let end = start + number.len() - 1;
+                numbers[i].push(Number { value, start, end })
+            }
         }
     }
 
