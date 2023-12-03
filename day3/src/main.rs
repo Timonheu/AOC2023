@@ -56,14 +56,17 @@ fn main() {
             } else {
                 number.end + 1
             };
-            if i >= 1 && adjacent_symbol(&symbols[i - 1], minimum, maximum) {
+            //check line above
+            if i > 0 && adjacent_symbol(&symbols[i - 1], minimum, maximum) {
                 sum += number.value;
                 continue '_symbol_check;
             }
-            if adjacent_symbol(&symbols[i], minimum, maximum) {
+            //check same line: check for a symbol to the left or to the right
+            if symbols[i].contains(&minimum) || symbols[i].contains(&maximum) {
                 sum += number.value;
                 continue '_symbol_check;
             }
+            //check line below
             if i < lines_vec[0].len() - 1 && adjacent_symbol(&symbols[i + 1], minimum, maximum) {
                 sum += number.value;
                 continue '_symbol_check;
