@@ -1,5 +1,5 @@
 use regex::Regex;
-use std::{collections::HashSet, fs};
+use std::fs;
 
 #[derive(Clone, Eq, Hash, PartialEq, Debug)]
 struct Number {
@@ -50,9 +50,10 @@ fn main() {
         }
 
         let found_cogs: Vec<usize> = line.match_indices('*').map(|c| c.0).collect();
-        // very inefficient
+        // not the prettiest, but for each cog collect all unique adjacent cogs, if there are
+        // exactly two add their gear ratio to the sum
         for cog in found_cogs {
-            let mut adjacent_numbers: HashSet<Number> = HashSet::new();
+            let mut adjacent_numbers: Vec<Number> = vec![];
             let minimum = if cog > 0 { cog - 1 } else { cog };
             let maximum = if cog >= lines_vec[0].len() - 1 {
                 cog
@@ -62,25 +63,24 @@ fn main() {
             if i > 0 {
                 for number in &numbers[i - 1] {
                     if overlap(minimum, maximum, number.start, number.end) {
-                        adjacent_numbers.insert(number.clone());
+                        adjacent_numbers.push(number.clone());
                     }
                 }
             }
             for number in &numbers[i] {
                 if overlap(minimum, maximum, number.start, number.end) {
-                    adjacent_numbers.insert(number.clone());
+                    adjacent_numbers.push(number.clone());
                 }
             }
             if i < number_of_lines - 1 {
                 for number in &numbers[i + 1] {
                     if overlap(minimum, maximum, number.start, number.end) {
-                        adjacent_numbers.insert(number.clone());
+                        adjacent_numbers.push(number.clone());
                     }
                 }
             }
             if adjacent_numbers.len() == 2 {
-                let iter: Vec<&Number> = adjacent_numbers.iter().collect();
-                cog_sum += iter[0].value * iter[1].value;
+                cog_sum += adjacent_numbers[0].value * adjacent_numbers[1].value;
             }
         }
     }
@@ -151,5 +151,12 @@ fn overlap_check(numbers: Vec<Vec<Number>>) -> bool {
 }
 
 fn overlap(start1: usize, end1: usize, start2: usize, end2: usize) -> bool {
-    (start1 >= start2 && start1 <= end2) || (end1 >= start2 && end1 <= end2)
+    // 1 starts or ends in 2
+    ((start1 >= start2 && start1 <= end2) || (end1 >= start2 && end1 <= end2))
+    // 2 starts or ends in 1
+    || ((start2 >= start1 && start2 <= end1) || (end2 >= start1 && end2 <= end1))
+    // 1 contains 2
+    || (start1 <= start2 && end1 >= end2)
+    // 2 contains 1
+    || (start2 <= start1 && end2 >= end1)
 }
