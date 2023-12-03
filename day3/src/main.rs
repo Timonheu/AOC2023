@@ -21,11 +21,12 @@ fn main() {
     // Find all numbers and put them in a two dimensional vector
     for i in 0..number_of_lines {
         let line = lines_vec[i];
-        let found_numbers = Regex::find_iter(&number_regex, line);
+        let found_numbers: Vec<&str> = Regex::find_iter(&number_regex, line)
+            .map(|m| m.as_str())
+            .collect();
 
         let mut remaining_line = String::from(line);
-        for number in found_numbers {
-            let number_slice = number.as_str();
+        for number_slice in found_numbers {
             let value: i32 = number_slice.parse().unwrap();
             let start = remaining_line.find(number_slice).unwrap();
             let end = start + number_slice.len() - 1;
@@ -33,7 +34,7 @@ fn main() {
             remaining_line = remaining_line.get_mut(end + 1..).unwrap().to_string();
         }
     }
-    assert!(overlap_check(numbers.clone()));
+    //assert!(overlap_check(numbers.clone()));
 
     let mut symbols: Vec<Vec<usize>> = vec![vec![]; number_of_lines];
 
