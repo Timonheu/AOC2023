@@ -104,47 +104,14 @@ fn main() {
     // Time to optimize: collapse all conversions into one
     let mut result: Vec<Range> = vec![];
     let mut i: usize = 0;
-    while i < conversions.len() - 1 {
-        let conversion = conversions[i].clone();
-        for range in conversion.ranges.clone() {
-            let max = range.end - range.start;
-            let converted_start = conversion.convert(range.start);
-            let converted_end = conversion.convert(range.end);
-            //println!("{max}");
-            let mut j = 0;
-            while j <= max {
-                let current_input = converted_start + j;
-                let current_value = conversion.convert(current_input);
-
-                //println!("Current input: {current_input}, Current value: {current_value}");
-                if current_value != current_input {
-                    let target_range = conversion.get_range(current_value).unwrap();
-                    //println!("target range: {:?}", target_range);
-                    //if the target range can fit the rest of this remaining range
-                    if target_range.end - current_value >= converted_end - current_input {
-                        result.push(Range {
-                            start: current_value,
-                            end: conversion.convert(converted_end),
-                            target: conversions[i + 1].convert(current_value),
-                        });
-                        break;
-                    } else {
-                        // target range can not fit the entirety of this remaining range
-                        result.push(Range {
-                            start: current_value,
-                            end: target_range.end,
-                            target: conversions[i + 1].convert(current_value),
-                        });
-                        //assert!(                      current_value < target_range.end,                            "Target range end: {}, Current value: {current_value}",                            target_range.end                        );
-                        j += target_range.end - current_value + 1;
-                        //print!("j: {j}");
-                    }
-                } else {
-                    j += 1;
-                }
-            }
-        }
-        i += 1;
+    for range in &conversions[0].ranges {
+        result.append(&mut collapse_range(
+            range.start,
+            range.end,
+            range,
+            &conversions,
+            result.clone(),
+        ));
     }
 
     let single_conversion = Conversion { ranges: result };
@@ -160,4 +127,52 @@ fn main() {
     }
 
     println!("Answer to part 1: {minimum_location_number}.");
+}
+
+fn collapse_range(
+    start: i64,
+    end: i64,
+    range: &Range,
+    conversions: &Vec<Conversion>,
+    result: Vec<Range>,
+) -> Vec<Range> {
+    if conversions.len() == 1 { //TODO: base case
+    }
+
+    let max = range.end - range.start;
+    let conversion = &conversions[0];
+    let converted_start = conversion.convert(range.start);
+    let converted_end = conversion.convert(end);
+    //println!("{max}");
+    let mut j = 0;
+    while j <= max {
+        let current_input = converted_start + j;
+        let current_value = conversion.convert(current_input);
+
+        //println!("Current input: {current_input}, Current value: {current_value}");
+        if current_value != current_input {
+            let target_range = conversion.get_range(current_value).unwrap();
+            //println!("target range: {:?}", target_range);
+            //if the target range can fit the rest of this remaining range
+            if target_range.end - current_value >= converted_end - current_input {
+                if conversions.len() == 1 {
+                    result.push(Range {
+                        start: start + j,
+                        end,
+                        target: conversions[0].convert(start + j),
+                    });
+                }
+                //TODO: recurse
+                break;
+            } else {
+                //TODO: recurse
+                j += target_range.end - current_value + 1;
+                //print!("j: {j}");
+            }
+        } else {
+            j += 1;
+        }
+    }
+
+    result
 }
