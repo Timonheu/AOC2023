@@ -1,6 +1,6 @@
 use std::fs;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Range {
     start: i64,
     end: i64,
@@ -23,6 +23,7 @@ impl Range {
     }
 }
 
+#[derive(Clone)]
 struct Conversion {
     ranges: Vec<Range>,
 }
@@ -35,6 +36,19 @@ impl Conversion {
             }
         }
         input
+    }
+
+    fn get_range(&self, input: i64) -> Option<Range> {
+        for range in &self.ranges {
+            if range.contains(input) {
+                return Some(Range {
+                    start: range.start,
+                    end: range.end,
+                    target: range.target,
+                });
+            }
+        }
+        None
     }
 }
 
@@ -90,20 +104,17 @@ fn main() {
         }
     }
     println!("Answer to part 1: {minimum_location_number}.");
-    // This is far to inefficient
-    let mut i = 0;
-    minimum_location_number = i64::MAX;
-    while i < seeds.len() - 1 {
-        for j in 0..=seeds[i + 1] {
-            let mut value = seeds[i] + j;
-            for conversion in &conversions {
-                value = conversion.convert(value);
-            }
-            if value < minimum_location_number {
-                minimum_location_number = value;
-            }
-        }
-        i += 2;
+
+    //find the optimal range from the ground up
+    let minimal_range = conversions.last().unwrap().ranges[0].clone();
+    let minimal_start_end = (minimal_range.start, minimal_range.end);
+
+    let mut reverse_conversions = conversions.clone();
+    reverse_conversions.reverse();
+
+    for conversion in reverse_conversions {
+        for range in conversion.ranges {}
     }
+
     println!("Answer to part 2: {minimum_location_number}.");
 }
