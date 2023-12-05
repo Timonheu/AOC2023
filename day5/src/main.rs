@@ -39,7 +39,7 @@ impl Conversion {
 }
 
 fn main() {
-    let input = fs::read_to_string("input/input.txt").unwrap();
+    let input = fs::read_to_string("input/example.txt").unwrap();
     let mut lines = input.lines();
 
     let seeds: Vec<i64> = lines
@@ -80,7 +80,7 @@ fn main() {
 
     let mut minimum_location_number: i64 = i64::MAX;
 
-    for seed in seeds {
+    for seed in seeds.clone() {
         let mut value = seed;
         for conversion in &conversions {
             value = conversion.convert(value);
@@ -89,5 +89,21 @@ fn main() {
             minimum_location_number = value;
         }
     }
-    println!("Answer to part 1: {minimum_location_number}");
+    println!("Answer to part 1: {minimum_location_number}.");
+    // This is far to inefficient
+    let mut i = 0;
+    minimum_location_number = i64::MAX;
+    while i < seeds.len() - 1 {
+        for j in 0..=seeds[i + 1] {
+            let mut value = seeds[i] + j;
+            for conversion in &conversions {
+                value = conversion.convert(value);
+            }
+            if value < minimum_location_number {
+                minimum_location_number = value;
+            }
+        }
+        i += 2;
+    }
+    println!("Answer to part 2: {minimum_location_number}.");
 }
