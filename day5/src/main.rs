@@ -49,7 +49,7 @@ impl Conversion {
 }
 
 fn main() {
-    let input = fs::read_to_string("input/example.txt").unwrap();
+    let input = fs::read_to_string("input/input.txt").unwrap();
     let mut lines = input.lines();
 
     let seeds: Vec<i64> = lines
