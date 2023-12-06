@@ -108,9 +108,10 @@ fn main() {
         result.append(&mut collapse_range(
             range.start,
             range.end,
-            range,
+            range.start,
+            range.end,
             &conversions,
-            result.clone(),
+            result.clone().as_mut(),
         ));
     }
 
@@ -129,20 +130,21 @@ fn main() {
     println!("Answer to part 1: {minimum_location_number}.");
 }
 
-fn collapse_range(
+fn collapse_range<'a>(
     start: i64,
     end: i64,
-    range: &Range,
-    conversions: &Vec<Conversion>,
-    result: Vec<Range>,
-) -> Vec<Range> {
+    current_start: i64,
+    current_end: i64,
+    conversions: &'a Vec<Conversion>,
+    result: &'a mut Vec<Range>,
+) -> &'a mut Vec<Range> {
     if conversions.len() == 1 { //TODO: base case
     }
+    let max = end - start;
 
-    let max = range.end - range.start;
     let conversion = &conversions[0];
-    let converted_start = conversion.convert(range.start);
-    let converted_end = conversion.convert(end);
+    let converted_start = conversion.convert(current_start);
+    let converted_end = conversion.convert(current_end);
     //println!("{max}");
     let mut j = 0;
     while j <= max {
@@ -158,11 +160,18 @@ fn collapse_range(
                 if conversions.len() == 1 {
                     result.push(Range {
                         start: start + j,
-                        end,
                         target: conversions[0].convert(start + j),
+                        end,
                     });
                 }
-                //TODO: recurse
+                result.append(collapse_range(
+                    start + j,
+                    end,
+                    current_value,
+                    converted_end,
+                    &conversions[1..].to_vec(),
+                    result.clone().as_mut(),
+                ));
                 break;
             } else {
                 //TODO: recurse
