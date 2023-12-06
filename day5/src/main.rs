@@ -103,9 +103,8 @@ fn main() {
 
     // Time to optimize: collapse all conversions into one
     let mut result: Vec<Range> = vec![];
-    let mut i: usize = 0;
     for range in &conversions[0].ranges {
-        result.append(&mut collapse_range(
+        result.append(collapse_range(
             range.start,
             range.end,
             range.start,
@@ -138,8 +137,6 @@ fn collapse_range<'a>(
     conversions: &'a Vec<Conversion>,
     result: &'a mut Vec<Range>,
 ) -> &'a mut Vec<Range> {
-    if conversions.len() == 1 { //TODO: base case
-    }
     let max = end - start;
 
     let conversion = &conversions[0];
@@ -158,23 +155,42 @@ fn collapse_range<'a>(
             //if the target range can fit the rest of this remaining range
             if target_range.end - current_value >= converted_end - current_input {
                 if conversions.len() == 1 {
+                    // base case
                     result.push(Range {
                         start: start + j,
                         target: conversions[0].convert(start + j),
                         end,
                     });
+                } else {
+                    // recurse
+                    result.append(collapse_range(
+                        start + j,
+                        end,
+                        current_value,
+                        converted_end,
+                        &conversions[1..].to_vec(),
+                        result.clone().as_mut(),
+                    ));
                 }
-                result.append(collapse_range(
-                    start + j,
-                    end,
-                    current_value,
-                    converted_end,
-                    &conversions[1..].to_vec(),
-                    result.clone().as_mut(),
-                ));
                 break;
             } else {
-                //TODO: recurse
+                let this_range_end = start + (target_range.end - current_value);
+                if conversions.len() == 1 {
+                    result.push(Range {
+                        start: start + j,
+                        end: this_range_end,
+                        target: conversions[0].convert(start + j),
+                    });
+                } else {
+                    result.append(collapse_range(
+                        start + j,
+                        this_range_end,
+                        current_value,
+                        target_range.end,
+                        &conversions[1..].to_vec(),
+                        result.clone().as_mut(),
+                    ));
+                }
                 j += target_range.end - current_value + 1;
                 //print!("j: {j}");
             }
@@ -182,6 +198,5 @@ fn collapse_range<'a>(
             j += 1;
         }
     }
-
     result
 }
