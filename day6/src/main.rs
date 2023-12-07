@@ -49,11 +49,10 @@ fn main() {
     }
     println!("Answer to part 1: {product}.");
 
-    let single_time_string = String::from_iter(times.iter().map(|t| t.to_string()).into_iter());
+    let single_time_string = String::from_iter(times.iter().map(|t| t.to_string()));
     let single_time: i64 = single_time_string.parse().unwrap();
 
-    let single_distance_string =
-        String::from_iter(distances.iter().map(|d| d.to_string()).into_iter());
+    let single_distance_string = String::from_iter(distances.iter().map(|d| d.to_string()));
     let single_distance: i64 = single_distance_string.parse().unwrap();
 
     let answer = Race {
