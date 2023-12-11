@@ -195,8 +195,11 @@ fn collapse_range(
                         .as_mut(),
                     );
                 }
-                // println!("input: {input}, target_size_left: {target_size_left}");
-                input += target_size_left;
+                // println!(
+                //     "input: {input}, loop end: {}, target_size_left: {target_size_left}",
+                //     converted_start + range_size
+                // );
+                input += target_size_left + 1;
             }
         }
     }
