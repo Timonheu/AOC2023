@@ -114,6 +114,8 @@ fn main() {
         ));
     }
 
+    println!("{:?}", collapsed_ranges);
+
     let single_conversion = Conversion {
         ranges: collapsed_ranges,
     };
@@ -137,7 +139,7 @@ fn collapse_range(
 ) -> Vec<Range> {
     let mut result = vec![];
     let mut input = converted_start;
-    while input <= converted_start + range_size {
+    while input < converted_start + range_size {
         let size_left = converted_start + range_size - input;
         let steps_taken = range_size - size_left;
         let target = conversions[0].convert(input);
@@ -194,10 +196,9 @@ fn collapse_range(
                     );
                 }
                 // println!("input: {input}, target_size_left: {target_size_left}");
-                input += target_size_left + 1;
+                input += target_size_left;
             }
         }
     }
-
     result
 }
