@@ -139,7 +139,7 @@ fn collapse_range(
 ) -> Vec<Range> {
     let mut result = vec![];
     let mut input = converted_start;
-    while input < converted_start + range_size {
+    while input <= converted_start + range_size {
         let size_left = converted_start + range_size - input;
         let steps_taken = range_size - size_left;
         let target = conversions[0].convert(input);
