@@ -146,8 +146,11 @@ fn collapse_range(
             continue;
         } else {
             let target_range = conversions[0].get_range(input).unwrap();
-            let target_end = target_range.end;
-            if target_end > target + size_left {
+            // println!(
+            //     "target: {target}, input: {input}, target_range: {:?}",
+            //     target_range
+            // );
+            if target_range.end > target + size_left {
                 //the entirety of the remaining range fits in the target range
                 if conversions.len() == 1 {
                     // base case
@@ -169,7 +172,8 @@ fn collapse_range(
                 }
                 break;
             } else {
-                let target_size_left = target_range.end - target;
+                // println!("target_range.end: {}, target: {target}", target_range.end);
+                let target_size_left = target_range.end - input;
                 //the remaining range does not entirely fit in the target range
                 if conversions.len() == 1 {
                     // base case
@@ -189,7 +193,8 @@ fn collapse_range(
                         .as_mut(),
                     );
                 }
-                input += target_size_left;
+                // println!("input: {input}, target_size_left: {target_size_left}");
+                input += target_size_left + 1;
             }
         }
     }
