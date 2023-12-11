@@ -145,7 +145,6 @@ fn collapse_range(
         let target = conversions[0].convert(input);
         if target == input {
             input += 1;
-            continue;
         } else {
             let target_range = conversions[0].get_range(input).unwrap();
             // println!(
