@@ -49,7 +49,7 @@ impl Conversion {
 }
 
 fn main() {
-    let input = fs::read_to_string("input/input.txt").unwrap();
+    let input = fs::read_to_string("input/example.txt").unwrap();
     let mut lines = input.lines();
 
     let seeds: Vec<i64> = lines
@@ -100,4 +100,99 @@ fn main() {
         }
     }
     println!("Answer to part 1: {minimum_location_number}.");
+
+    let mut collapsed_ranges: Vec<Range> = vec![];
+
+    let ranges = conversions[0].clone().ranges;
+
+    for range in ranges {
+        collapsed_ranges.append(&mut collapse_range(
+            range.start,
+            range.start,
+            range.end - range.start,
+            conversions.clone(),
+        ));
+    }
+
+    let single_conversion = Conversion {
+        ranges: collapsed_ranges,
+    };
+
+    minimum_location_number = i64::MAX;
+    for seed in seeds {
+        let value = single_conversion.convert(seed);
+        if value < minimum_location_number {
+            minimum_location_number = value;
+        }
+    }
+
+    println!("Answer to part 1: {minimum_location_number}.")
+}
+
+fn collapse_range(
+    original_start: i64,
+    converted_start: i64,
+    range_size: i64,
+    conversions: Vec<Conversion>,
+) -> Vec<Range> {
+    let mut result = vec![];
+    let mut input = converted_start;
+    while input <= converted_start + range_size {
+        let size_left = converted_start + range_size - input;
+        let steps_taken = range_size - size_left;
+        let target = conversions[0].convert(input);
+        if target == input {
+            input += 1;
+            continue;
+        } else {
+            let target_range = conversions[0].get_range(input).unwrap();
+            let target_end = target_range.end;
+            if target_end > target + size_left {
+                //the entirety of the remaining range fits in the target range
+                if conversions.len() == 1 {
+                    // base case
+                    result.push(Range {
+                        start: original_start + steps_taken,
+                        end: original_start + range_size,
+                        target,
+                    });
+                } else {
+                    result.append(
+                        collapse_range(
+                            original_start + steps_taken,
+                            target,
+                            size_left,
+                            conversions[1..].to_vec(),
+                        )
+                        .as_mut(),
+                    );
+                }
+                break;
+            } else {
+                let target_size_left = target_range.end - target;
+                //the remaining range does not entirely fit in the target range
+                if conversions.len() == 1 {
+                    // base case
+                    result.push(Range {
+                        start: original_start + steps_taken,
+                        end: original_start + steps_taken + target_size_left,
+                        target,
+                    });
+                } else {
+                    result.append(
+                        collapse_range(
+                            original_start + steps_taken,
+                            target,
+                            target_size_left,
+                            conversions[1..].to_vec(),
+                        )
+                        .as_mut(),
+                    );
+                }
+                input += target_size_left;
+            }
+        }
+    }
+
+    result
 }
