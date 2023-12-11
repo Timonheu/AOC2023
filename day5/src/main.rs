@@ -49,7 +49,7 @@ impl Conversion {
 }
 
 fn main() {
-    let input = fs::read_to_string("input/example.txt").unwrap();
+    let input = fs::read_to_string("input/input.txt").unwrap();
     let mut lines = input.lines();
 
     let seeds: Vec<i64> = lines
@@ -76,7 +76,7 @@ fn main() {
             let target: i64 = split.next().unwrap().parse().unwrap();
             let start: i64 = split.next().unwrap().parse().unwrap();
             let range: i64 = split.next().unwrap().parse().unwrap();
-            let end = start + range;
+            let end = start + range - 1;
             conversion.ranges.push(Range { start, end, target });
             let next = lines.next();
             if next.is_some() {
