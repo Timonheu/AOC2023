@@ -141,7 +141,7 @@ fn collapse_range(
     let mut input = converted_start;
     while input <= converted_start + range_size {
         let size_left = converted_start + range_size - input;
-        let steps_taken = range_size - size_left;
+        let steps_taken = input - converted_start;
         let target = conversions[0].convert(input);
         if target == input {
             input += 1;
@@ -151,7 +151,7 @@ fn collapse_range(
             //     "target: {target}, input: {input}, target_range: {:?}",
             //     target_range
             // );
-            if target_range.end > target + size_left {
+            if target_range.end > input + size_left {
                 //the entirety of the remaining range fits in the target range
                 if conversions.len() == 1 {
                     // base case
@@ -194,10 +194,10 @@ fn collapse_range(
                         .as_mut(),
                     );
                 }
-                // println!(
-                //     "input: {input}, loop end: {}, target_size_left: {target_size_left}",
-                //     converted_start + range_size
-                // );
+                println!(
+                    "input: {input}, loop end: {}, target_size_left: {target_size_left}",
+                    converted_start + range_size
+                );
                 input += target_size_left + 1;
             }
         }
